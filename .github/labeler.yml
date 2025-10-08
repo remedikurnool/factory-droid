@@ -1,0 +1,36 @@
+# Auto-labeling configuration for PRs
+
+'backend':
+  - apps/backend/**/*
+  - packages/database/**/*
+
+'frontend':
+  - apps/frontend/**/*
+
+'admin':
+  - apps/admin/**/*
+
+'documentation':
+  - '**/*.md'
+  - docs/**/*
+
+'ci/cd':
+  - .github/**/*
+
+'dependencies':
+  - '**/package.json'
+  - '**/pnpm-lock.yaml'
+
+'database':
+  - packages/database/**/*
+  - '**/prisma/**/*
+
+'security':
+  - apps/backend/src/config/security.config.ts
+  - apps/backend/src/common/middleware/security.middleware.ts
+  - '**/*security*'
+
+'tests':
+  - '**/*.spec.ts'
+  - '**/*.test.ts'
+  - test/**/*

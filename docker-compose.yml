@@ -1,0 +1,113 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: onemedi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: onemedi
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - onemedi-network
+
+  # MongoDB for Logs
+  mongodb:
+    image: mongo:7-jammy
+    container_name: onemedi-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_DATABASE: onemedi-logs
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - onemedi-network
+
+  # Redis (Optional - for caching)
+  redis:
+    image: redis:7-alpine
+    container_name: onemedi-redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - onemedi-network
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+    container_name: onemedi-backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/onemedi
+      MONGODB_URI: mongodb://admin:admin@mongodb:27017/onemedi-logs?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_ENV: production
+    ports:
+      - '4000:4000'
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    networks:
+      - onemedi-network
+    volumes:
+      - ./uploads:/app/uploads
+
+  # Frontend (Customer App)
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+    container_name: onemedi-frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000/api/v1
+      NODE_ENV: production
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+    networks:
+      - onemedi-network
+
+  # Admin Panel
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+    container_name: onemedi-admin
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:4000/api/v1
+      NODE_ENV: production
+    ports:
+      - '3001:3001'
+    depends_on:
+      - backend
+    networks:
+      - onemedi-network
+
+networks:
+  onemedi-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:

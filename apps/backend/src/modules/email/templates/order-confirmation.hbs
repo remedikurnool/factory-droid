@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f4f4f4;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f4f4;">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px 20px; text-align: center;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 28px;">Order Confirmed!</h1>
+              <p style="color: #ffffff; margin: 10px 0 0 0;">Order #{{orderNumber}}</p>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td style="padding: 40px 30px;">
+              <p style="color: #333333; font-size: 16px; margin: 0 0 20px 0;">
+                Hi {{customerName}},
+              </p>
+              
+              <p style="color: #666666; line-height: 1.6; margin: 0 0 30px 0;">
+                Thank you for your order! We've received your order and we're preparing it for delivery.
+              </p>
+              
+              <!-- Order Items -->
+              <h3 style="color: #333333; margin: 0 0 15px 0;">Order Items:</h3>
+              <table width="100%" cellpadding="10" style="border: 1px solid #e5e5e5; border-radius: 5px;">
+                {{#each items}}
+                <tr style="border-bottom: 1px solid #e5e5e5;">
+                  <td style="color: #333333;">{{this.name}}</td>
+                  <td style="color: #666666; text-align: center;">x {{this.quantity}}</td>
+                  <td style="color: #333333; text-align: right;">₹{{this.price}}</td>
+                </tr>
+                {{/each}}
+                <tr>
+                  <td colspan="2" style="color: #333333; font-weight: bold; padding-top: 15px;">Total:</td>
+                  <td style="color: #10b981; font-weight: bold; font-size: 18px; text-align: right; padding-top: 15px;">₹{{total}}</td>
+                </tr>
+              </table>
+              
+              <!-- Delivery Info -->
+              <div style="margin: 30px 0; padding: 20px; background-color: #f8f8f8; border-radius: 5px;">
+                <h3 style="color: #333333; margin: 0 0 10px 0;">Delivery Address:</h3>
+                <p style="color: #666666; line-height: 1.6; margin: 0;">{{deliveryAddress}}</p>
+                <p style="color: #666666; margin: 15px 0 0 0;">
+                  <strong>Estimated Delivery:</strong> {{estimatedDelivery}}
+                </p>
+              </div>
+              
+              <div style="text-align: center; margin: 30px 0;">
+                <a href="https://onemedi.com/orders/{{orderNumber}}" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                  Track Your Order
+                </a>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8f8f8; padding: 20px 30px; text-align: center;">
+              <p style="color: #999999; margin: 0; font-size: 12px;">
+                Questions? Contact us at <a href="mailto:support@onemedi.com" style="color: #10b981;">support@onemedi.com</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
