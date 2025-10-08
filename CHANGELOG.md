@@ -6,8 +6,8 @@ All notable changes to the ONE MEDI project will be documented in this file.
 
 ### Added
 
-#### Frontend Application (Next.js 14.2.15)
-- ✅ Initialized Next.js 14+ frontend with App Router
+#### Frontend Application (Next.js 15.5.4)
+- ✅ Initialized Next.js 15+ frontend with App Router
 - ✅ TypeScript configuration with strict mode
 - ✅ Tailwind CSS 3.4+ with custom healthcare theme
 - ✅ shadcn/ui setup with healthcare color palette
@@ -15,12 +15,12 @@ All notable changes to the ONE MEDI project will be documented in this file.
 - ✅ Basic homepage with service categories display
 - ✅ Environment configuration for API URL
 - ✅ ESLint configuration
-- ✅ Dependencies: React 18.3, Zustand, React Hook Form, Zod, Socket.IO client
+- ✅ Dependencies: React 19.0, Zustand, React Hook Form, Zod, Socket.IO client
 - ✅ Image optimization with Sharp
 - ✅ Carousel support with Embla Carousel
 
-#### Admin Panel (Next.js 14.2.15)
-- ✅ Initialized Next.js 14+ admin panel with App Router
+#### Admin Panel (Next.js 15.5.4)
+- ✅ Initialized Next.js 15+ admin panel with App Router
 - ✅ TypeScript configuration
 - ✅ Tailwind CSS with admin-focused blue theme
 - ✅ shadcn/ui components
@@ -78,8 +78,8 @@ All notable changes to the ONE MEDI project will be documented in this file.
 
 ### Technical Details
 
-**Next.js Version**: 14.2.15 (Latest stable)
-**React Version**: 18.3.1
+**Next.js Version**: 15.5.4 (Latest stable)
+**React Version**: 19.0.0
 **TypeScript**: 5.3.3
 **Tailwind CSS**: 3.4.1
 **NestJS**: 10.3.0
@@ -87,14 +87,14 @@ All notable changes to the ONE MEDI project will be documented in this file.
 ### Configuration
 
 #### Frontend
-- App Router (Next.js 14+)
+- App Router (Next.js 15+)
 - TypeScript strict mode enabled
 - Tailwind with healthcare green theme (#16a34a)
 - Mobile-first responsive design
 - Image optimization enabled
 
 #### Admin
-- App Router (Next.js 14+)
+- App Router (Next.js 15+)
 - TypeScript strict mode enabled
 - Tailwind with professional blue theme
 - Dark mode support
@@ -151,4 +151,4 @@ This is the initial release. No migration needed.
 
 ## Version History
 
-- **v1.0.0** (2025-10-08) - Initial release with Next.js 14.2.15
+- **v1.0.0** (2025-10-08) - Initial release with Next.js 15.5.4
