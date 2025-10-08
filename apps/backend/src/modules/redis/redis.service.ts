@@ -59,6 +59,14 @@ export class RedisService implements OnModuleDestroy {
     return this.client.flushdb();
   }
 
+  async deleteByPattern(pattern: string): Promise<number> {
+    const keys = await this.client.keys(pattern);
+    if (keys.length === 0) {
+      return 0;
+    }
+    return this.client.del(...keys);
+  }
+
   onModuleDestroy() {
     this.client.disconnect();
   }

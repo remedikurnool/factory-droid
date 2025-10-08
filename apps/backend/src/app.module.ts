@@ -57,6 +57,7 @@ import { AuditLogInterceptor } from './common/interceptors/audit-log.interceptor
     EmailModule,
     SmsModule,
     NotificationsModule,
+    SearchModule,
   ],
   providers: [
     {
