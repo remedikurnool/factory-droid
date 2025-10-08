@@ -1,0 +1,32 @@
+{
+  "name": "one-medi",
+  "version": "1.0.0",
+  "description": "ONE MEDI Healthcare Platform",
+  "private": true,
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,json}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "git:pull": "bash scripts/git-helpers.sh pull",
+    "git:push": "bash scripts/git-helpers.sh quick-push",
+    "git:commit": "bash scripts/git-helpers.sh smart-commit",
+    "git:branch": "bash scripts/git-helpers.sh new-branch",
+    "git:sync": "bash scripts/git-helpers.sh sync-main",
+    "git:pr": "bash scripts/git-helpers.sh create-pr",
+    "git:auto": "bash scripts/git-helpers.sh auto",
+    "git:help": "bash scripts/git-helpers.sh help"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.1",
+    "turbo": "^1.11.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1"
+}
