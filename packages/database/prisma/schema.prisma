@@ -1,0 +1,774 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  phone         String   @unique
+  password      String
+  firstName     String
+  lastName      String
+  role          UserRole @default(CUSTOMER)
+  isVerified    Boolean  @default(false)
+  walletBalance Float    @default(0)
+  loyaltyPoints Float    @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  addresses          Address[]
+  prescriptions      Prescription[]
+  orders             Order[]
+  cartItems          CartItem[]
+  labBookings        LabBooking[]
+  appointments       Appointment[]
+  serviceBookings    ServiceBooking[]
+  ambulanceRequests  AmbulanceRequest[]
+  bloodRequests      BloodRequest[]
+  insurancePurchases InsurancePurchase[]
+  payments           Payment[]
+  notifications      Notification[]
+  medicineReviews    MedicineReview[]
+  doctorReviews      DoctorReview[]
+  searchHistory      SearchHistory[]
+
+  @@index([email])
+  @@index([phone])
+  @@map("users")
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  STAFF
+  PARTNER
+  DOCTOR
+}
+
+model Address {
+  id           String  @id @default(uuid())
+  userId       String
+  type         String
+  fullName     String
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  pincode      String
+  landmark     String?
+  isDefault    Boolean @default(false)
+
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders          Order[]
+  labBookings     LabBooking[]
+  serviceBookings ServiceBooking[]
+
+  @@index([userId])
+  @@map("addresses")
+}
+
+// Medicine Management (Enhanced for Sprint 2.1)
+model MedicineCategory {
+  id          String              @id @default(uuid())
+  name        String
+  slug        String              @unique
+  description String?
+  image       String?
+  icon        String?
+  parentId    String?
+  parent      MedicineCategory?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    MedicineCategory[]  @relation("CategoryHierarchy")
+  sortOrder   Int                 @default(0)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  medicines   Medicine[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@index([isActive])
+  @@map("medicine_categories")
+}
+
+model Brand {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  logo        String?
+  description String?
+  country     String?
+  website     String?
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  medicines   Medicine[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@map("brands")
+}
+
+model Medicine {
+  id                     String   @id @default(uuid())
+  name                   String
+  slug                   String   @unique
+  genericName            String
+  brandId                String
+  categoryId             String
+  description            String   @db.Text
+  composition            String   @db.Text
+  manufacturer           String
+  manufacturerAddress    String?
+  isPrescriptionRequired Boolean  @default(false)
+  price                  Float
+  discountPrice          Float?
+  discountPercentage     Float?
+  mrp                    Float
+  stockQuantity          Int      @default(0)
+  minStockLevel          Int      @default(10)
+  maxStockLevel          Int      @default(1000)
+  unit                   String   // e.g., "strip", "bottle", "box"
+  unitSize               String   // e.g., "10 tablets", "100ml"
+  packagingType          String?  // e.g., "strip", "bottle", "blister"
+  
+  // Images
+  primaryImage           String?
+  images                 String[] // Array of image URLs
+  
+  // SEO & Marketing
+  metaTitle              String?
+  metaDescription        String?
+  keywords               String[]
+  isFeatured             Boolean  @default(false)
+  isBestSeller           Boolean  @default(false)
+  isNewArrival           Boolean  @default(false)
+  
+  // Product Details
+  dosageForm             String?  // e.g., "Tablet", "Syrup", "Injection"
+  strength               String?  // e.g., "500mg", "10mg/ml"
+  routeOfAdministration  String?  // e.g., "Oral", "Topical", "Injection"
+  therapeuticClass       String?  // e.g., "Antibiotic", "Painkiller"
+  
+  // Usage Information
+  uses                   String?  @db.Text
+  sideEffects            String?  @db.Text
+  contraindications      String?  @db.Text
+  warnings               String?  @db.Text
+  interactions           String?  @db.Text
+  dosageInstructions     String?  @db.Text
+  storageInstructions    String?  @db.Text
+  
+  // Regulatory
+  licenseNumber          String?
+  manufacturingDate      DateTime?
+  expiryDate             DateTime?
+  batchNumber            String?
+  
+  // Stats
+  viewCount              Int      @default(0)
+  salesCount             Int      @default(0)
+  wishlistCount          Int      @default(0)
+  rating                 Float    @default(0)
+  reviewCount            Int      @default(0)
+  
+  // Status
+  isActive               Boolean  @default(true)
+  isDeleted              Boolean  @default(false)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  // Relations
+  brand            Brand            @relation(fields: [brandId], references: [id])
+  category         MedicineCategory @relation(fields: [categoryId], references: [id])
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  reviews          MedicineReview[]
+  stockHistory     StockHistory[]
+  priceHistory     PriceHistory[]
+  wishlistItems    WishlistItem[]
+
+  @@index([slug])
+  @@index([name])
+  @@index([genericName])
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([isFeatured])
+  @@index([isBestSeller])
+  @@index([isNewArrival])
+  @@index([isActive])
+  @@index([rating])
+  @@index([salesCount])
+  @@fulltext([name, genericName, description])
+  @@map("medicines")
+}
+
+// Medicine Reviews & Ratings (New for Sprint 2.1)
+model MedicineReview {
+  id          String   @id @default(uuid())
+  medicineId  String
+  userId      String
+  rating      Int      // 1-5
+  title       String?
+  comment     String   @db.Text
+  isVerified  Boolean  @default(false) // Verified purchase
+  helpfulCount Int     @default(0)
+  isApproved  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  medicine    Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([medicineId, userId]) // One review per user per medicine
+  @@index([medicineId])
+  @@index([userId])
+  @@index([rating])
+  @@index([isApproved])
+  @@map("medicine_reviews")
+}
+
+// Stock Management (New for Sprint 2.1)
+model StockHistory {
+  id          String   @id @default(uuid())
+  medicineId  String
+  type        StockMovementType
+  quantity    Int
+  reference   String? // Order ID, Supplier ID, etc.
+  notes       String?
+  previousStock Int
+  newStock    Int
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  medicine    Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  @@index([medicineId])
+  @@index([type])
+  @@index([createdAt])
+  @@map("stock_history")
+}
+
+enum StockMovementType {
+  PURCHASE      // Stock added from supplier
+  SALE          // Stock sold to customer
+  RETURN        // Customer return
+  DAMAGE        // Damaged/expired items
+  ADJUSTMENT    // Manual adjustment
+  TRANSFER      // Transfer to another location
+}
+
+// Price History (New for Sprint 2.1)
+model PriceHistory {
+  id          String   @id @default(uuid())
+  medicineId  String
+  oldPrice    Float
+  newPrice    Float
+  oldMrp      Float?
+  newMrp      Float?
+  reason      String?
+  createdBy   String?
+  createdAt   DateTime @default(now())
+
+  medicine    Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  @@index([medicineId])
+  @@index([createdAt])
+  @@map("price_history")
+}
+
+// Wishlist (New for Sprint 2.1)
+model WishlistItem {
+  id          String   @id @default(uuid())
+  userId      String
+  medicineId  String
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicine    Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, medicineId])
+  @@index([userId])
+  @@index([medicineId])
+  @@map("wishlist_items")
+}
+
+// Cart
+model CartItem {
+  id         String   @id @default(uuid())
+  userId     String
+  medicineId String
+  quantity   Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, medicineId])
+  @@index([userId])
+  @@index([medicineId])
+  @@map("cart_items")
+}
+
+// Orders
+model Order {
+  id              String      @id @default(uuid())
+  userId          String
+  addressId       String
+  orderNumber     String      @unique
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  subtotal        Float
+  discount        Float       @default(0)
+  deliveryCharge  Float       @default(0)
+  tax             Float       @default(0)
+  total           Float
+  paymentMethod   String?
+  trackingNumber  String?
+  deliveredAt     DateTime?
+  cancelledAt     DateTime?
+  cancellationReason String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id])
+  address    Address     @relation(fields: [addressId], references: [id])
+  items      OrderItem[]
+  payments   Payment[]
+
+  @@index([userId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  RETURNED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model OrderItem {
+  id         String @id @default(uuid())
+  orderId    String
+  medicineId String
+  quantity   Int
+  price      Float
+  discount   Float  @default(0)
+  total      Float
+
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+
+  @@index([orderId])
+  @@index([medicineId])
+  @@map("order_items")
+}
+
+// Payments
+model Payment {
+  id              String        @id @default(uuid())
+  orderId         String
+  userId          String
+  amount          Float
+  currency        String        @default("INR")
+  status          PaymentStatus @default(PENDING)
+  paymentMethod   String
+  transactionId   String?       @unique
+  gatewayResponse Json?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@index([orderId])
+  @@index([userId])
+  @@index([status])
+  @@map("payments")
+}
+
+// Prescriptions
+model Prescription {
+  id         String   @id @default(uuid())
+  userId     String
+  fileUrl    String
+  verifiedBy String?
+  isVerified Boolean  @default(false)
+  notes      String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("prescriptions")
+}
+
+// Lab Tests
+model LabCategory {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  labTests    LabTest[]
+
+  @@index([slug])
+  @@index([isActive])
+  @@map("lab_categories")
+}
+
+model LabTest {
+  id                       String   @id @default(uuid())
+  name                     String
+  slug                     String   @unique
+  categoryId               String
+  description              String   @db.Text
+  price                    Float
+  discountPrice            Float?
+  preparationInstructions  String?  @db.Text
+  reportDeliveryHours      Int      @default(24)
+  sampleType               String
+  fastingRequired          Boolean  @default(false)
+  homeCollectionAvailable  Boolean  @default(true)
+  parameters               String[] // List of test parameters
+  bookingsCount            Int      @default(0)
+  isActive                 Boolean  @default(true)
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  category LabCategory      @relation(fields: [categoryId], references: [id])
+  bookings LabBookingTest[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("lab_tests")
+}
+
+model LabPartner {
+  id          String       @id @default(uuid())
+  name        String
+  address     String
+  city        String
+  state       String
+  pincode     String
+  phone       String
+  email       String
+  latitude    Float?
+  longitude   Float?
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  labBookings LabBooking[]
+
+  @@index([city])
+  @@index([isActive])
+  @@map("lab_partners")
+}
+
+model LabBooking {
+  id                 String      @id @default(uuid())
+  userId             String
+  addressId          String
+  labPartnerId       String?
+  bookingNumber      String      @unique
+  status             BookingStatus @default(PENDING)
+  sampleCollectionDate DateTime?
+  sampleCollectionTime String?
+  homeCollection     Boolean     @default(true)
+  subtotal           Float
+  discount           Float       @default(0)
+  total              Float
+  reportUrl          String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  user       User             @relation(fields: [userId], references: [id])
+  address    Address          @relation(fields: [addressId], references: [id])
+  labPartner LabPartner?      @relation(fields: [labPartnerId], references: [id])
+  tests      LabBookingTest[]
+
+  @@index([userId])
+  @@index([bookingNumber])
+  @@index([status])
+  @@map("lab_bookings")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  SAMPLE_COLLECTED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+model LabBookingTest {
+  id           String @id @default(uuid())
+  labBookingId String
+  labTestId    String
+  price        Float
+
+  labBooking LabBooking @relation(fields: [labBookingId], references: [id], onDelete: Cascade)
+  labTest    LabTest    @relation(fields: [labTestId], references: [id])
+
+  @@index([labBookingId])
+  @@index([labTestId])
+  @@map("lab_booking_tests")
+}
+
+// Doctors
+model Doctor {
+  id              String        @id @default(uuid())
+  firstName       String
+  lastName        String
+  email           String        @unique
+  phone           String        @unique
+  specialty       String
+  qualifications  String        @db.Text
+  experienceYears Int
+  consultationFee Float
+  bio             String?       @db.Text
+  profileImage    String?
+  languages       String[]
+  rating          Float         @default(0)
+  reviewCount     Int           @default(0)
+  latitude        Float?
+  longitude       Float?
+  isAvailable     Boolean       @default(true)
+  isActive        Boolean       @default(true)
+  nextAvailableSlot DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  appointments  Appointment[]
+  doctorReviews DoctorReview[]
+
+  @@index([specialty])
+  @@index([isAvailable])
+  @@index([rating])
+  @@map("doctors")
+}
+
+model DoctorReview {
+  id         String   @id @default(uuid())
+  doctorId   String
+  userId     String
+  rating     Int      // 1-5
+  comment    String   @db.Text
+  isApproved Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  doctor Doctor @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, userId])
+  @@index([doctorId])
+  @@index([userId])
+  @@map("doctor_reviews")
+}
+
+model Appointment {
+  id                String      @id @default(uuid())
+  userId            String
+  doctorId          String
+  appointmentNumber String      @unique
+  date              DateTime
+  time              String
+  status            AppointmentStatus @default(SCHEDULED)
+  fee               Float
+  consultationType  String      // "online" or "in-person"
+  notes             String?     @db.Text
+  prescription      String?     @db.Text
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+
+  @@index([userId])
+  @@index([doctorId])
+  @@index([date])
+  @@index([status])
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// Services
+model ServiceBooking {
+  id            String   @id @default(uuid())
+  userId        String
+  addressId     String
+  serviceType   String
+  scheduledDate DateTime
+  scheduledTime String
+  status        String
+  amount        Float
+  createdAt     DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  address Address @relation(fields: [addressId], references: [id])
+
+  @@index([userId])
+  @@index([serviceType])
+  @@map("service_bookings")
+}
+
+// Emergency Services
+model AmbulanceRequest {
+  id          String   @id @default(uuid())
+  userId      String
+  location    String
+  destination String
+  status      String
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("ambulance_requests")
+}
+
+model BloodRequest {
+  id        String   @id @default(uuid())
+  userId    String
+  bloodType String
+  units     Int
+  urgency   String
+  status    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([bloodType])
+  @@map("blood_requests")
+}
+
+// Insurance
+model InsurancePurchase {
+  id         String   @id @default(uuid())
+  userId     String
+  planId     String
+  premium    Float
+  startDate  DateTime
+  endDate    DateTime
+  status     String
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("insurance_purchases")
+}
+
+// Notifications
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  type      String
+  title     String
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  data      Json?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// Search History (From Sprint 1.4)
+model SearchHistory {
+  id           String   @id @default(uuid())
+  userId       String
+  query        String
+  searchType   String   // "medicines", "doctors", "labtests"
+  resultsCount Int
+  timestamp    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([searchType])
+  @@index([timestamp])
+  @@map("search_history")
+}
+
+// Lab entity for location search
+model Lab {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  city      String
+  state     String
+  phone     String
+  latitude  Float
+  longitude Float
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([city])
+  @@index([isActive])
+  @@map("labs")
+}
+
+// Pharmacy entity for location search
+model Pharmacy {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  city      String
+  state     String
+  phone     String
+  latitude  Float
+  longitude Float
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([city])
+  @@index([isActive])
+  @@map("pharmacies")
+}
