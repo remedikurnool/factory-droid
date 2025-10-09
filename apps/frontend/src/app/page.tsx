@@ -1,4 +1,4 @@
-import { APP_NAME } from '@onemedi/shared'
+import { APP_NAME } from "@onemedi/shared";
 
 export default function Home() {
   return (
@@ -13,27 +13,39 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">💊 Medicines</h2>
-            <p className="text-muted-foreground">Browse and order medicines with prescription upload</p>
+            <p className="text-muted-foreground">
+              Browse and order medicines with prescription upload
+            </p>
           </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">🧪 Lab Tests</h2>
-            <p className="text-muted-foreground">Book diagnostic tests with home sample collection</p>
+            <p className="text-muted-foreground">
+              Book diagnostic tests with home sample collection
+            </p>
           </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">👨‍⚕️ Doctors</h2>
-            <p className="text-muted-foreground">Find and book appointments with specialists</p>
+            <p className="text-muted-foreground">
+              Find and book appointments with specialists
+            </p>
           </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">🏠 Homecare</h2>
-            <p className="text-muted-foreground">Nursing, physiotherapy, diabetes management</p>
+            <p className="text-muted-foreground">
+              Nursing, physiotherapy, diabetes management
+            </p>
           </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">🚑 Emergency</h2>
-            <p className="text-muted-foreground">Ambulance booking and blood bank requests</p>
+            <p className="text-muted-foreground">
+              Ambulance booking and blood bank requests
+            </p>
           </div>
           <div className="p-6 border rounded-lg hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-semibold mb-2">🛡️ Insurance</h2>
-            <p className="text-muted-foreground">Health insurance plans purchase</p>
+            <p className="text-muted-foreground">
+              Health insurance plans purchase
+            </p>
           </div>
         </div>
         <div className="mt-12 text-center">
@@ -43,5 +55,5 @@ export default function Home() {
         </div>
       </div>
     </main>
-  )
+  );
 }
