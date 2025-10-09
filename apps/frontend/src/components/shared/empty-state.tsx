@@ -1,39 +1,44 @@
-import { Button } from '@/components/ui/button'
-import { PackageX, Search, AlertCircle } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { PackageX, Search, AlertCircle } from "lucide-react";
 
 interface EmptyStateProps {
-  type: 'no-products' | 'no-results' | 'error'
-  title?: string
-  description?: string
+  type: "no-products" | "no-results" | "error";
+  title?: string;
+  description?: string;
   action?: {
-    label: string
-    onClick: () => void
-  }
+    label: string;
+    onClick: () => void;
+  };
 }
 
 const emptyStateConfig = {
-  'no-products': {
+  "no-products": {
     icon: PackageX,
-    defaultTitle: 'No Products Found',
-    defaultDescription: 'There are no products available at the moment.',
+    defaultTitle: "No Products Found",
+    defaultDescription: "There are no products available at the moment.",
   },
-  'no-results': {
+  "no-results": {
     icon: Search,
-    defaultTitle: 'No Results Found',
+    defaultTitle: "No Results Found",
     defaultDescription:
-      'We couldn\'t find any medicines matching your search. Try adjusting your filters or search terms.',
+      "We couldn't find any medicines matching your search. Try adjusting your filters or search terms.",
   },
   error: {
     icon: AlertCircle,
-    defaultTitle: 'Something Went Wrong',
+    defaultTitle: "Something Went Wrong",
     defaultDescription:
-      'We encountered an error while loading the products. Please try again.',
+      "We encountered an error while loading the products. Please try again.",
   },
-}
+};
 
-export function EmptyState({ type, title, description, action }: EmptyStateProps) {
-  const config = emptyStateConfig[type]
-  const Icon = config.icon
+export function EmptyState({
+  type,
+  title,
+  description,
+  action,
+}: EmptyStateProps) {
+  const config = emptyStateConfig[type];
+  const Icon = config.icon;
 
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center p-8 text-center">
@@ -52,5 +57,5 @@ export function EmptyState({ type, title, description, action }: EmptyStateProps
         </Button>
       )}
     </div>
-  )
+  );
 }

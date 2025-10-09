@@ -1,29 +1,30 @@
-import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
-import type { Medicine } from '../types/medicine'
-import type { CartItem, Cart } from '../types/cart'
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import type { Medicine } from "../types/medicine";
+import type { CartItem, Cart } from "../types/cart";
 
 interface CartStore extends Cart {
-  addItem: (medicine: Medicine, quantity?: number) => void
-  removeItem: (itemId: string) => void
-  updateQuantity: (itemId: string, quantity: number) => void
-  clearCart: () => void
-  getItemQuantity: (medicineId: string) => number
-  isInCart: (medicineId: string) => boolean
+  addItem: (medicine: Medicine, quantity?: number) => void;
+  removeItem: (itemId: string) => void;
+  updateQuantity: (itemId: string, quantity: number) => void;
+  clearCart: () => void;
+  getItemQuantity: (medicineId: string) => number;
+  isInCart: (medicineId: string) => boolean;
 }
 
-const DELIVERY_FEE = 40 // ₹40 flat delivery fee
-const FREE_DELIVERY_THRESHOLD = 500 // Free delivery above ₹500
+const DELIVERY_FEE = 40; // ₹40 flat delivery fee
+const FREE_DELIVERY_THRESHOLD = 500; // Free delivery above ₹500
 
-const calculateTotals = (items: CartItem[]): Omit<Cart, 'items'> => {
-  const subtotal = items.reduce((sum, item) => sum + item.totalPrice, 0)
+const calculateTotals = (items: CartItem[]): Omit<Cart, "items"> => {
+  const subtotal = items.reduce((sum, item) => sum + item.totalPrice, 0);
   const discount = items.reduce(
-    (sum, item) => sum + (item.medicine.mrp - item.medicine.sellingPrice) * item.quantity,
-    0
-  )
-  const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE
-  const total = subtotal + deliveryFee
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
+    (sum, item) =>
+      sum + (item.medicine.mrp - item.medicine.sellingPrice) * item.quantity,
+    0,
+  );
+  const deliveryFee = subtotal >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+  const total = subtotal + deliveryFee;
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return {
     totalItems,
@@ -31,8 +32,8 @@ const calculateTotals = (items: CartItem[]): Omit<Cart, 'items'> => {
     discount,
     deliveryFee,
     total,
-  }
-}
+  };
+};
 
 export const useCartStore = create<CartStore>()(
   persist(
@@ -47,10 +48,10 @@ export const useCartStore = create<CartStore>()(
       addItem: (medicine: Medicine, quantity: number = 1) => {
         set((state) => {
           const existingItem = state.items.find(
-            (item) => item.medicineId === medicine.id
-          )
+            (item) => item.medicineId === medicine.id,
+          );
 
-          let newItems: CartItem[]
+          let newItems: CartItem[];
 
           if (existingItem) {
             // Update quantity if item exists
@@ -61,8 +62,8 @@ export const useCartStore = create<CartStore>()(
                     quantity: item.quantity + quantity,
                     totalPrice: (item.quantity + quantity) * item.price,
                   }
-                : item
-            )
+                : item,
+            );
           } else {
             // Add new item
             const newItem: CartItem = {
@@ -72,31 +73,31 @@ export const useCartStore = create<CartStore>()(
               quantity,
               price: medicine.sellingPrice,
               totalPrice: medicine.sellingPrice * quantity,
-            }
-            newItems = [...state.items, newItem]
+            };
+            newItems = [...state.items, newItem];
           }
 
           return {
             items: newItems,
             ...calculateTotals(newItems),
-          }
-        })
+          };
+        });
       },
 
       removeItem: (itemId: string) => {
         set((state) => {
-          const newItems = state.items.filter((item) => item.id !== itemId)
+          const newItems = state.items.filter((item) => item.id !== itemId);
           return {
             items: newItems,
             ...calculateTotals(newItems),
-          }
-        })
+          };
+        });
       },
 
       updateQuantity: (itemId: string, quantity: number) => {
         if (quantity <= 0) {
-          get().removeItem(itemId)
-          return
+          get().removeItem(itemId);
+          return;
         }
 
         set((state) => {
@@ -107,13 +108,13 @@ export const useCartStore = create<CartStore>()(
                   quantity,
                   totalPrice: quantity * item.price,
                 }
-              : item
-          )
+              : item,
+          );
           return {
             items: newItems,
             ...calculateTotals(newItems),
-          }
-        })
+          };
+        });
       },
 
       clearCart: () => {
@@ -124,21 +125,21 @@ export const useCartStore = create<CartStore>()(
           discount: 0,
           deliveryFee: 0,
           total: 0,
-        })
+        });
       },
 
       getItemQuantity: (medicineId: string) => {
-        const item = get().items.find((item) => item.medicineId === medicineId)
-        return item ? item.quantity : 0
+        const item = get().items.find((item) => item.medicineId === medicineId);
+        return item ? item.quantity : 0;
       },
 
       isInCart: (medicineId: string) => {
-        return get().items.some((item) => item.medicineId === medicineId)
+        return get().items.some((item) => item.medicineId === medicineId);
       },
     }),
     {
-      name: 'cart-storage',
+      name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
-    }
-  )
-)
+    },
+  ),
+);

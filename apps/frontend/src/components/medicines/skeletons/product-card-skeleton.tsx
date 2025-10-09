@@ -1,5 +1,5 @@
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductCardSkeleton() {
   return (
@@ -39,7 +39,7 @@ export function ProductCardSkeleton() {
         <Skeleton className="h-9 w-full" />
       </CardFooter>
     </Card>
-  )
+  );
 }
 
 export function ProductCardSkeletonGrid({ count = 8 }: { count?: number }) {
@@ -49,5 +49,5 @@ export function ProductCardSkeletonGrid({ count = 8 }: { count?: number }) {
         <ProductCardSkeleton key={i} />
       ))}
     </div>
-  )
+  );
 }

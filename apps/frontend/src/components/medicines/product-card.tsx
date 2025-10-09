@@ -1,58 +1,64 @@
-'use client'
+"use client";
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { Heart, ShoppingCart } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { useCartStore } from '@/lib/store/cart-store'
-import { useWishlistStore } from '@/lib/store/wishlist-store'
-import { formatCurrency, calculateDiscount, formatStockStatus } from '@/lib/utils/format'
-import type { Medicine } from '@/lib/types/medicine'
-import { cn } from '@/lib/utils/cn'
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useCartStore } from "@/lib/store/cart-store";
+import { useWishlistStore } from "@/lib/store/wishlist-store";
+import {
+  formatCurrency,
+  calculateDiscount,
+  formatStockStatus,
+} from "@/lib/utils/format";
+import type { Medicine } from "@/lib/types/medicine";
+import { cn } from "@/lib/utils/cn";
 
 interface ProductCardProps {
-  medicine: Medicine
-  className?: string
+  medicine: Medicine;
+  className?: string;
 }
 
 export function ProductCard({ medicine, className }: ProductCardProps) {
-  const addToCart = useCartStore((state) => state.addItem)
-  const isInCart = useCartStore((state) => state.isInCart(medicine.id))
-  const toggleWishlist = useWishlistStore((state) => state.toggleItem)
-  const isInWishlist = useWishlistStore((state) => state.isInWishlist(medicine.id))
+  const addToCart = useCartStore((state) => state.addItem);
+  const isInCart = useCartStore((state) => state.isInCart(medicine.id));
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
+  const isInWishlist = useWishlistStore((state) =>
+    state.isInWishlist(medicine.id),
+  );
 
-  const discount = calculateDiscount(medicine.mrp, medicine.sellingPrice)
-  const stockStatus = formatStockStatus(medicine.stock)
-  const isOutOfStock = medicine.stock === 0
+  const discount = calculateDiscount(medicine.mrp, medicine.sellingPrice);
+  const stockStatus = formatStockStatus(medicine.stock);
+  const isOutOfStock = medicine.stock === 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!isOutOfStock) {
-      addToCart(medicine, 1)
+      addToCart(medicine, 1);
     }
-  }
+  };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault()
-    toggleWishlist(medicine)
-  }
+    e.preventDefault();
+    toggleWishlist(medicine);
+  };
 
   return (
     <Link href={`/medicines/${medicine.slug}`}>
       <Card
         className={cn(
-          'group h-full transition-all hover:shadow-lg',
-          isOutOfStock && 'opacity-60',
-          className
+          "group h-full transition-all hover:shadow-lg",
+          isOutOfStock && "opacity-60",
+          className,
         )}
       >
         <CardContent className="p-4">
           {/* Image */}
           <div className="relative mb-3 aspect-square overflow-hidden rounded-md bg-gray-100">
             <Image
-              src={medicine.images?.[0] || '/placeholder-medicine.png'}
+              src={medicine.images?.[0] || "/placeholder-medicine.png"}
               alt={medicine.name}
               fill
               className="object-contain p-2 transition-transform group-hover:scale-105"
@@ -77,12 +83,14 @@ export function ProductCard({ medicine, className }: ProductCardProps) {
             <button
               onClick={handleToggleWishlist}
               className="absolute right-2 top-2 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100"
-              aria-label={isInWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+              aria-label={
+                isInWishlist ? "Remove from wishlist" : "Add to wishlist"
+              }
             >
               <Heart
                 className={cn(
-                  'h-4 w-4',
-                  isInWishlist ? 'fill-red-500 text-red-500' : 'text-gray-600'
+                  "h-4 w-4",
+                  isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600",
                 )}
               />
             </button>
@@ -142,7 +150,7 @@ export function ProductCard({ medicine, className }: ProductCardProps) {
             size="sm"
           >
             {isOutOfStock ? (
-              'Out of Stock'
+              "Out of Stock"
             ) : isInCart ? (
               <>
                 <ShoppingCart className="mr-2 h-4 w-4" />
@@ -158,5 +166,5 @@ export function ProductCard({ medicine, className }: ProductCardProps) {
         </CardFooter>
       </Card>
     </Link>
-  )
+  );
 }

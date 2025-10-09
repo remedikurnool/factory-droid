@@ -1,29 +1,29 @@
-import { Medicine } from './medicine'
+import { Medicine } from "./medicine";
 
 export interface CartItem {
-  id: string
-  medicine: Medicine
-  medicineId: string
-  quantity: number
-  price: number
-  totalPrice: number
+  id: string;
+  medicine: Medicine;
+  medicineId: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
 }
 
 export interface Cart {
-  items: CartItem[]
-  totalItems: number
-  subtotal: number
-  discount: number
-  deliveryFee: number
-  total: number
+  items: CartItem[];
+  totalItems: number;
+  subtotal: number;
+  discount: number;
+  deliveryFee: number;
+  total: number;
 }
 
 export interface AddToCartPayload {
-  medicineId: string
-  quantity: number
+  medicineId: string;
+  quantity: number;
 }
 
 export interface UpdateCartItemPayload {
-  itemId: string
-  quantity: number
+  itemId: string;
+  quantity: number;
 }
