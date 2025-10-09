@@ -1,0 +1,40 @@
+{
+  "name": "onemedi-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ONE MEDI Healthcare E-Commerce Platform",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:frontend\" \"npm run dev:admin\" --names \"FRONTEND,ADMIN\" --prefix-colors \"cyan,magenta\"",
+    "dev:frontend": "cd apps/frontend && npm run dev",
+    "dev:admin": "cd apps/admin && npm run dev",
+    "dev:backend": "cd apps/backend && npm run start:dev",
+    "build": "npm run build:frontend && npm run build:admin",
+    "build:frontend": "cd apps/frontend && npm run build",
+    "build:admin": "cd apps/admin && npm run build",
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:admin\" --names \"FRONTEND,ADMIN\" --prefix-colors \"cyan,magenta\"",
+    "start:frontend": "cd apps/frontend && npm run start",
+    "start:admin": "cd apps/admin && npm run start",
+    "lint": "npm run lint:frontend && npm run lint:admin",
+    "lint:frontend": "cd apps/frontend && npm run lint",
+    "lint:admin": "cd apps/admin && npm run lint",
+    "clean": "npm run clean:frontend && npm run clean:admin",
+    "clean:frontend": "cd apps/frontend && npm run clean",
+    "clean:admin": "cd apps/admin && npm run clean",
+    "install:all": "npm install && cd apps/frontend && npm install && cd ../admin && npm install",
+    "setup": "npm run install:all && npm run setup:env",
+    "setup:env": "node scripts/setup-env.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remedikurnool/factory-droid.git"
+  },
+  "author": "Doctor Karthik",
+  "license": "MIT"
+}
